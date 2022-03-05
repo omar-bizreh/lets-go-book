@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/omar-bizreh/snippetbox/pkg/models"
 )
 
@@ -25,10 +26,16 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "home.page.tmpl", &templateData{Snippets: s})
 }
 
+// Create snippet form response
+func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
+
+}
+
 // Add a showSnippet handler function
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil || id < 1 {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
 		app.notFound(w)
 		return
 	}
