@@ -17,7 +17,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	}
 
 	buf := new(bytes.Buffer)
-	app.addDefaultDate(td, r)
+	app.addDefaultData(td, r)
 	err := ts.Execute(buf, td)
 	if err != nil {
 		app.serverError(w, err)
@@ -47,11 +47,13 @@ func (app *application) notFound(w http.ResponseWriter) {
 }
 
 // Add default year to template data
-func (app *application) addDefaultDate(td *templateData, r *http.Request) *templateData {
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
 	if td == nil {
 		td = &templateData{}
 	}
 
 	td.CurrentYear = time.Now().Year()
+
+	td.Flash = app.session.PopString(r, "flash")
 	return td
 }

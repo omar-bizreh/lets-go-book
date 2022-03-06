@@ -50,8 +50,8 @@ func (f *Form) PermittedValues(field string, opts ...string) {
 		if value == opt {
 			return
 		}
-		f.Errors.Add(field, "This field is invalid")
 	}
+	f.Errors.Add(field, "This field is invalid")
 }
 
 func (f *Form) Valid() bool {
