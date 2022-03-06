@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/omar-bizreh/snippetbox/pkg/forms"
 	"github.com/omar-bizreh/snippetbox/pkg/models"
 )
 
@@ -28,7 +29,9 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // Create snippet form response
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-
+	app.render(w, r, "create.page.tmpl", &templateData{
+		Form: forms.New(nil),
+	})
 }
 
 // Add a showSnippet handler function
@@ -59,14 +62,31 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := "O Snail"
-	content := "O Snail content"
-	expires := "7"
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	title := r.Form.Get("title")
+	content := r.Form.Get("content")     // Contains parsed query params
+	expires := r.PostForm.Get("expires") // Only form body
+
+	form := forms.New(r.PostForm)
+
+	form.Required("title", "content", "expires")
+	form.MaxLength("title", 100)
+	form.PermittedValues("expires", "365", "7", "1")
+
+	if !form.Valid() {
+		app.render(w, r, "create.page.tmpl", &templateData{Form: form})
+		return
+	}
 
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
+	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
