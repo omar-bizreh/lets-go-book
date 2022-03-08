@@ -11,12 +11,13 @@ import (
 
 // Template data container
 type templateData struct {
-	CurrentYear int
-	Form        *forms.Form
-	Flash       string
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
-	CSRFToken   string
+	AuthenticatedUser *models.User
+	CurrentYear       int
+	Form              *forms.Form
+	Flash             string
+	Snippet           *models.Snippet
+	Snippets          []*models.Snippet
+	CSRFToken         string
 }
 
 // Create a humanDate function which returns a formatted time.Time object

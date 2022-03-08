@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/justinas/nosurf"
+	"github.com/omar-bizreh/snippetbox/pkg/models"
 )
 
 // Render templates
@@ -58,4 +59,12 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	td.CSRFToken = nosurf.Token(r)
 	td.Flash = app.session.PopString(r, "flash")
 	return td
+}
+
+func (app *application) authenticatedUser(r *http.Request) *models.User {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
 }
