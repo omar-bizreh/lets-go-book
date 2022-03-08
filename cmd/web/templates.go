@@ -16,6 +16,7 @@ type templateData struct {
 	Flash       string
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
+	CSRFToken   string
 }
 
 // Create a humanDate function which returns a formatted time.Time object
