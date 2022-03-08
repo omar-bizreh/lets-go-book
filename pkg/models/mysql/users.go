@@ -18,14 +18,16 @@ func (m *UserModel) Insert(name, email, password string) error {
 		return err
 	}
 
-	stmt := `INSERT INTO users (name, email, hashed_password, created) VALUES (?, ?, ?, UTC_TIMESTMP())`
+	stmt := `INSERT INTO users (name, email, hashed_password, created) VALUES (?, ?, ?, UTC_TIMESTAMP())`
 
-	_, err = m.DB.Exec(stmt, name, email, string(hashedPassword))
-	if err != nil {
-		if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+	_, insertErr := m.DB.Exec(stmt, name, email, string(hashedPassword))
+	if insertErr != nil {
+		if mysqlErr, ok := insertErr.(*mysql.MySQLError); !ok {
 			if mysqlErr.Number == 1062 {
 				return models.ErrDuplicateEmail
 			}
+		} else {
+			return insertErr
 		}
 	}
 	return nil

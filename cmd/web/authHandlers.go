@@ -64,6 +64,9 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 		form.Errors.Add("generic", "Email or Password is incorrect")
 		app.render(w, r, "login.page.tmpl", &templateData{Form: form})
 		return
+	} else if err != nil {
+		app.serverError(w, err)
+		return
 	}
 
 	app.session.Put(r, "userID", id)
